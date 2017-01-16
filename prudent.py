@@ -1,18 +1,17 @@
 import os
 import time
 #Python Scripts
-import webcheck # webcheck.py - Checks for malicious URLs
-import tokens # tokens.py - Hosting all API tokens.
-
+#import webcheck # webcheck.py - Checks for malicious URLs
 from slackclient import SlackClient
+from gglsbl import SafeBrowsingList
 
 # Retrieve APIs from tokens.py
-BOT_ID = S3Connection(tokens.bot_id)
-GGLSBL_TOKEN = S3Connection(tokens.gglsbl_token)
+#BOT_ID = os.environ.get("BOT_ID")
+#GGLSBL_TOKEN = (os.environ.get('GGLSBL_TOKEN')
 
 
 # prudent's ID as an environment variable
-#BOT_ID = os.environ.get("BOT_ID")
+BOT_ID = os.environ.get("BOT_ID")
 
 # constants
 AT_BOT = "<@" + BOT_ID + ">"
@@ -20,8 +19,7 @@ HELP = "help"
 HELLO = "hello"
 
 # instantiate Slack & Twilio clients
-slack_client = SlackClient(tokens.slackbot_token)
-#slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
+slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
 
 def handle_command(command, channel):
     """
@@ -41,11 +39,12 @@ def handle_command(command, channel):
 		- 'help' - To load up this menu\n
 		\t\t Usage: `@prudent help` """
         slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
-	elif command.startswith(HELLO):
-	# HELLO Action
+	
+    elif command.startswith(HELLO):
 		response = "Hello back to you!"
 		slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
-	else:
+
+    else:
 		response = "Not sure what you mean. Use the *" + HELP + "* command. " + AT_BOT + HELP
 
 def parse_slack_output(slack_rtm_output):
