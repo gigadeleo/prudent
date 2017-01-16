@@ -1,19 +1,27 @@
 import os
 import time
+#Python Scripts
+import webcheck # webcheck.py - Checks for malicious URLs
+import tokens # tokens.py - Hosting all API tokens.
+
 from slackclient import SlackClient
+
+# Retrieve APIs from tokens.py
+BOT_ID = S3Connection(tokens.bot_id)
+GGLSBL_TOKEN = S3Connection(tokens.gglsbl_token)
 
 
 # prudent's ID as an environment variable
-BOT_ID = os.environ.get("BOT_ID")
+#BOT_ID = os.environ.get("BOT_ID")
 
 # constants
 AT_BOT = "<@" + BOT_ID + ">"
-EXAMPLE_COMMAND = "do"
+HELP = "help"
 HELLO = "hello"
 
 # instantiate Slack & Twilio clients
-slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
-
+slack_client = SlackClient(tokens.slackbot_token)
+#slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
 
 def handle_command(command, channel):
     """
@@ -21,13 +29,21 @@ def handle_command(command, channel):
         are valid commands. If so, then acts on the commands. If not,
         returns back what it needs for clarification.
     """
-    response = "Not sure what you mean. Use the *" + EXAMPLE_COMMAND + \
+    response = "Not sure what you mean. Use the *" + HELP + \
                "* command with numbers, delimited by spaces."
     
-    if command.startswith(EXAMPLE_COMMAND):
-        response = "Sure...write some more code then I can do that!"
+    if command.startswith(HELP):
+	# HELP Action
+        response = "Hi! I'm " + AT_BOT + """, and this is the HELP menu. These are the commands I am familiar with:\n
+		- 'check' - To check for a malicious site\n
+		\t\t Usage: `@prudent check http://wwww.slack.com`\n
+		- 'hello' - Use this if you need a friend\n
+		- 'help' - To load up this menu\n
+		\t\t Usage: `@prudent help` """
         slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
-    elif command.startswith(HELLO):
+    
+	elif command.startswith(HELLO):
+	# HELLO Action
         response = "Hello back to you!"
         slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
 
