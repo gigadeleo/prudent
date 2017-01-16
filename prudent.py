@@ -41,11 +41,12 @@ def handle_command(command, channel):
 		- 'help' - To load up this menu\n
 		\t\t Usage: `@prudent help` """
         slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
-    
 	elif command.startswith(HELLO):
 	# HELLO Action
-        response = "Hello back to you!"
-        slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
+		response = "Hello back to you!"
+		slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
+	else:
+		response = "Not sure what you mean. Use the *" + HELP + "* command."
 
 def parse_slack_output(slack_rtm_output):
     """
