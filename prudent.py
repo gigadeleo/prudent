@@ -46,7 +46,7 @@ def handle_command(command, channel):
 		response = "Hello back to you!"
 		slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
 	else:
-		response = "Not sure what you mean. Use the *" + HELP + "* command."
+		response = "Not sure what you mean. Use the *" + HELP + "* command. " + AT_BOT + HELP
 
 def parse_slack_output(slack_rtm_output):
     """
