@@ -1,6 +1,6 @@
 # Prudent - A Slack bot assistant for information security & compliance needs.
-# Version 0 
-# Build 0.1-alpha
+# Version   0 
+# Build     0.1-alpha
 #
 import os
 import time
