@@ -1,0 +1,12 @@
+# SlackBot Token - get this from http://your_team_name.slack.com/apps/manage/custom-integrations/ > Bots > Edit > API Token
+# As a word of warning, never publish API Tokens publicly on the web.
+# Read more on Slack authentication safety, here: https://api.slack.com/docs/oauth-safety
+slackbot_token='INSERT SLACKBOT TOKEN HERE'
+
+# Log-in to your Google developers API console: https://console.developers.google.com/apis > Credentails Menu > Create credentails
+# Open the Credentails menu item
+gglsbl_token='INSERT GOOGLE SAFE BROWSING LIST TOKEN HERE'
+
+# Your BOT_ID
+# Use print_bot_id.py to get this value
+bot_id='INSERT YOUR BOT ID HERE'
