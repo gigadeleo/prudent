@@ -1,86 +1,90 @@
-# Prudent - An InfoSec Assistant for Slack.
-# Version 1.0.0.1
+# Prudent - A Slack bot assistant for information security & compliance needs.
+# Version 0 
+# Build 0.1-alpha
 #
-
 import os
 import time
-import check
-import pci
+
+# import prudent cababilities
+import check	# Cheks URLs to determine if malicious or not. 
+import pci		# Looks Up PCI DSS Requirements 
+
+# import slack client
 from slackclient import SlackClient
 
-# Prudent's ID as an environment variable
+# prudent's Bot_ID
 BOT_ID = os.environ.get("BOT_ID")
 
 # constants
 AT_BOT = "<@" + BOT_ID + ">"
+
+# cconstants - command capabilities (add/remove as necessary)
 HELP = "help"
 HELLO = "hello"
 BLCHECK = "check"
 PCILOOK = "pcilookup"
-POST = False
 
-#EXAMPLE_COMMAND = "do"
+### Still to configure
+ARRAY_RESP = False
 
-# instantiate Slack & Twilio clients
+# Instantiate Slack client SLACK_BOT_TOKEN
 slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
 
-
+# handle command used as @prudent <command>
 def handle_command(command, channel):
-    """
-        Receives commands directed at the bot and determines if they
-        are valid commands. If so, then acts on the commands. If not,
-        returns back what it needs for clarification.
-    """
+    # Receives commands directed at the bot and determines if they
+    # are valid commands. If so, then acts on the commands. If not,
+    # returns back what it needs for clarification.
+    
+	# Default response - no command matches
     response = "Not sure what you mean. Use the *" + HELP + "* command. Usage: " + AT_BOT + " " + HELP
     
+    #-----------------------------------------------------------------------------
+    # HELP command response
     if command.startswith(HELP):
-    # HELP Action
         response = """Hi! I'm Prudent! and this is the 'help' menu. These are the commands I am familiar with:\n
-> *check* - To check for a malicious site.\r
-> *hello* - Use this if you need a friend.\r
-> *pcilookup* - Search for a PCI Audit Requirement.\r
+> *check* - Use this command to check whether a pasted url is malicious or not. Usage: `@prudent check <url>`\r
+> *pcilookup* - Use this to find any PCI Requirements that match a particular word or phrase. Usage: `@prudent pcilookup <keyword>`\r
+> *hello* - Use this command if you need someone to talk to.\r
 > *help* - To load up this menu.\n\n
-Example: @prudent <command>"""
-        #response = "Sure...write some more code then I can do that!"
+Example: @prudent <command> """
 
-    #--------------------------------------
+    #-----------------------------------------------------------------------------
+    # HELLO command response
     elif command.startswith(HELLO):
-    # HELLO Action
-    #
         response = "Hello back to you!"
 
-    #--------------------------------------
+    #-----------------------------------------------------------------------------
+    # BLCHECK command response
     elif command.startswith(BLCHECK):
-    # CHECK Malicious Site Action
-    #
         url = command.split('check ', 1)[1]
         url = url.strip("< >")
         
         response = check.check_url(url)
-
-    #--------------------------------------
+    #-----------------------------------------------------------------------------
+    # PCILOOKUP command response
     elif command.startswith(PCILOOK):
-    #PCILOOKUP Action
-    #
         searchstring = command.split('pcilookup ', 1) [1]
         searchstring = searchstring.strip("< >")
-
+        
         if searchstring:
             response = pci.lookup(searchstring)
             for r  in response:
-                POST = True
-                slack_client.api_call("chat.postMessage", channel=channel, text=r, as_user=True, unfurl_media=False)
+                ARRAY_RESP = True
+                
         else:
             response = "Nothing to Show!"
-    #--------------------------------------
+    #-----------------------------------------------------------------------------
     else:
     # Catchall command not found
         response = "Not sure what you mean. Use the *" + HELP + "* command. Usage: " + AT_BOT + " " + HELP
     #--------------------------------------
-    # Catchall return response
+    # Return response
     #
-    slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True, unfurl_media=False)
-
+    if ARRAY_RESP:
+        slack_client.api_call("chat.postMessage", channel=channel, text=r, as_user=True, unfurl_media=False)
+    else:
+        slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True, unfurl_media=False)
 
 def parse_slack_output(slack_rtm_output):
     """
